@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workbench</title>
+<style>
+:root {
+  --bg: #f6f4ee;
+  --surface: #fbfaf6;
+  --surface-hover: #ffffff;
+  --ink: #1c1b18;
+  --ink-sub: #6d685d;
+  --ink-mute: #9c9689;
+  --border: rgba(28, 27, 24, 0.09);
+  --border-strong: rgba(28, 27, 24, 0.22);
+  --pill-active-bg: #1c1b18;
+  --pill-active-ink: #f6f4ee;
+  --star: #b87d24;
+  --star-bg: rgba(184, 125, 36, 0.1);
+  --star-border: rgba(184, 125, 36, 0.35);
+  --shadow-hover: 0 12px 28px -10px rgba(28, 27, 24, 0.08);
+  --radius: 12px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #181816;
+  --surface-hover: #1e1e1b;
+  --ink: #f0eee8;
+  --ink-sub: #959086;
+  --ink-mute: #5c5850;
+  --border: rgba(240, 238, 232, 0.08);
+  --border-strong: rgba(240, 238, 232, 0.2);
+  --pill-active-bg: #f0eee8;
+  --pill-active-ink: #111110;
+  --star: #e2b462;
+  --star-bg: rgba(226, 180, 98, 0.12);
+  --star-border: rgba(226, 180, 98, 0.35);
+  --shadow-hover: 0 16px 32px -12px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding:
+    calc(clamp(32px, 5.5vw, 64px) + env(safe-area-inset-top, 0px))
+    clamp(20px, 5.5vw, 60px)
+    calc(clamp(56px, 7.5vw, 96px) + env(safe-area-inset-bottom, 0px));
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: clamp(32px, 4.5vw, 48px);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.brand .meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.theme-btn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-sub);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+.theme-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+/* Primary Navigation */
+#top {
+  display: flex;
+  align-items: center;
+  gap: clamp(22px, 3.2vw, 40px);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#top::-webkit-scrollbar { display: none; }
+
+#top button {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 0 0 15px;
+  border: 0;
+  background: none;
+  color: var(--ink-sub);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+
+#top button:hover {
+  color: var(--ink);
+}
+
+#top button[aria-selected="true"] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+#top button[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1.5px;
+  background: var(--ink);
+}
+
+#top button .num {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+#top button[aria-selected="true"] .num {
+  color: var(--ink-sub);
+}
+
+/* Sub Navigation & Status Bar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  margin: 24px 0 30px;
+  min-height: 30px;
+}
+
+#sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#sub button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink-sub);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+#sub button:hover {
+  border-color: var(--border-strong);
+  color: var(--ink);
+}
+
+#sub button[aria-selected="true"] {
+  background: var(--pill-active-bg);
+  border-color: var(--pill-active-bg);
+  color: var(--pill-active-ink);
+}
+
+#cnt {
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Grid */
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: clamp(14px, 2vw, 20px);
+}
+
+/* Card */
+.c {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition:
+    transform 0.28s var(--ease),
+    border-color 0.25s var(--ease),
+    background-color 0.25s var(--ease),
+    box-shadow 0.28s var(--ease);
+}
+
+.c:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  box-shadow: var(--shadow-hover);
+}
+
+.c.f {
+  border-color: var(--star-border);
+}
+
+.c a {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  height: 100%;
+  padding: 20px 22px 22px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+.c-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 32px;
+}
+
+.c-idx {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.c-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.c-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.c b {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-arrow {
+  flex: none;
+  font-size: 13px;
+  color: var(--ink-mute);
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition: opacity 0.22s var(--ease), transform 0.25s var(--ease), color 0.2s var(--ease);
+}
+
+.c:hover .c-arrow {
+  opacity: 1;
+  color: var(--ink);
+  transform: translate(0, 0);
+}
+
+.c span.sub {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  color: var(--ink-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Favorite Button */
+.c .fav-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-mute);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.c .fav-btn:hover {
+  background: var(--star-bg);
+  color: var(--star);
+}
+
+.c .fav-btn:active {
+  transform: scale(0.9);
+}
+
+.c.f .fav-btn {
+  color: var(--star);
+}
+
+/* Empty State */
+.e {
+  grid-column: 1 / -1;
+  padding: 72px 20px;
+  text-align: center;
+  color: var(--ink-sub);
+  font-size: 13.5px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+
+/* Focus */
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+  .c-arrow {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>Workbench</h1>
+      <span class="meta">Index</span>
+    </div>
+    <button id="themeBtn" class="theme-btn" type="button" aria-label="テーマ切替" title="テーマ切替"></button>
+  </header>
+
+  <nav id="top" role="tablist"></nav>
+
+  <div class="toolbar">
+    <nav id="sub"></nav>
+    <div id="cnt"></div>
+  </div>
+
+  <main id="list"></main>
+</div>
+
+<script>
+var G=["素材サイト","自作ツール","ジェネレータ","マニュアル"];
+var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール","音"];
+var D=[
+[0,"写真","Unsplash","https://unsplash.com/ja"],
+[0,"写真","Pexels","https://www.pexels.com/ja-jp/"],
+[0,"写真","Pixabay","https://pixabay.com/ja/"],
+[0,"写真","ぱくたそ","https://www.pakutaso.com/"],
+[0,"写真","写真AC","https://www.photo-ac.com/"],
+[0,"写真","FOODIES FEED","https://www.foodiesfeed.com/"],
+[0,"写真","O-DAN","https://o-dan.net/ja/"],
+[0,"イラスト","いらすとや","https://www.irasutoya.com/"],
+[0,"イラスト","イラストAC","https://www.ac-illust.com/"],
+[0,"イラスト","Shigureni Free Illust","https://www.shigureni.com/"],
+[0,"イラスト","ちょうどいいイラスト","https://tyoudoii-illust.com/"],
+[0,"イラスト","unDraw","https://undraw.co/illustrations"],
+[0,"イラスト","Storyset","https://storyset.com/"],
+[0,"イラスト","PhotoshopVIP 素材一覧","https://photoshopvip.net/category/freebies"],
+[0,"イラスト","フリーイラスト124選","https://photoshopvip.net/115273"],
+[0,"アイコン・SVG","Heroicons","https://heroicons.com/"],
+[0,"アイコン・SVG","Phosphor Icons","https://phosphoricons.com/"],
+[0,"アイコン・SVG","Haikei","https://haikei.app/"],
+[0,"アイコン・SVG","Hero Patterns","https://heropatterns.com/"],
+[0,"アイコン・SVG","SVGurt","https://svgurt.com/#/"],
+[0,"アイコン・SVG","fffuel SVG spinner","https://www.fffuel.co/svg-spinner/"],
+[0,"アイコン・SVG","fffuel iiisometric","https://www.fffuel.co/iiisometric/"],
+[0,"配色","Adobe Color","https://color.adobe.com/ja/"],
+[0,"配色","Coolors","https://coolors.co/"],
+[0,"配色","Colormind","http://colormind.io/"],
+[0,"配色","Khroma","https://www.khroma.co/"],
+[0,"配色","COLOURlovers","https://www.colourlovers.com/"],
+[0,"配色","Color Hunt","https://colorhunt.co/"],
+[0,"配色","ColorDrop","https://colordrop.io/"],
+[0,"配色","nipponcolors","https://nipponcolors.com/"],
+[0,"配色","配色アイデア手帳","https://www.color-sample.com/"],
+[0,"配色","Colorable","https://colorable.jxnblk.com/"],
+[0,"配色","WebAIM Contrast","https://webaim.org/resources/contrastchecker/"],
+[0,"配色","Realtime Colors","https://www.realtimecolors.com/"],
+[0,"CSS・動き","Animista","https://animista.net/play/basic/slide/slide-bl"],
+[0,"CSS・動き","Animista 背景","https://animista.net/play/background"],
+[0,"CSS・動き","Epic Spinners","https://epic-spinners.epicmax.co/"],
+[0,"CSS・動き","Neumorphism.io","https://neumorphism.io/#e0e0e0"],
+[0,"CSS・動き","CSS Gradient","https://cssgradient.io/"],
+[0,"CSS・動き","Web Motion Catalog","https://web-motion-catalog.com/"],
+[0,"CSS・動き","Modulesss…","https://modulesss.com/"],
+[0,"CSS・動き","Spline","https://spline.design/"],
+[0,"Stella","Button Interaction","https://stella-create.co.jp/tools/css-button-interaction-studio/"],
+[0,"Stella","Scroll Scene","https://stella-create.co.jp/tools/css-scroll-scene-studio/?scene=runner&fog=0.6"],
+[0,"Stella","3D Gallery","https://stella-create.co.jp/tools/css-3d-gallery-studio/"],
+[0,"Stella","WebGL Image Transition","https://stella-create.co.jp/tools/webgl-image-transition-studio/"],
+[0,"Stella","Canvas Particle Image","https://stella-create.co.jp/tools/canvas-particle-image-studio/"],
+[0,"Stella","Christmas Decoration","https://stella-create.co.jp/tools/christmas-decoration-studio/"],
+[0,"UI・ツール","Google Fonts","https://fonts.google.com/"],
+[0,"UI・ツール","UI Pocket","https://www.ui-pocket.com/mobile/apps"],
+[0,"UI・ツール","UIデザイン技37選","https://photoshopvip.net/160552"],
+[0,"UI・ツール","tableタグ生成","https://on-ze.com/tools/html-table/"],
+[0,"音","効果音ラボ","https://soundeffect-lab.info/"],
+[0,"音","DOVA-SYNDROME","https://dova-s.jp/"],
+[1,"","見積書作成ツール","https://chi-papa.github.io/miitsumori/","miitsumori"],
+[1,"","取引先メーカーリンク集","https://chi-papa.github.io/agri-links/","agri-links"],
+[1,"","配送荷物追跡ツール","https://chi-papa.github.io/multi-carrier-tracking/","multi-carrier-tracking"],
+[1,"","ECサイト用ページ制作ツール","https://chi-papa.github.io/ec-table-craft/","テーブルレイアウト生成（セル結合）"],
+[1,"","営業所クイック検索","https://chi-papa.github.io/carrier-office-search/","carrier-office-search"],
+[1,"","RMS用 記号コード変換","https://chi-papa.github.io/html-entity-symbol-converter/","記号 → 数値文字参照"],
+[1,"","路線便 最安シミュレーター","https://chi-papa.github.io/route-freight-simulator/","九州（福岡）発 運賃比較"],
+[1,"","価格シミュレーター","https://chi-papa.github.io/price-simulator/","price-simulator"],
+[2,"","テーブルレイアウト","https://chi-papa.github.io/table-layout-generator/","table-layout-generator"],
+[2,"","フレックスボックス","https://chi-papa.github.io/flexbox-generator/","flexbox-generator"],
+[2,"","画像圧縮","https://chi-papa.github.io/local-image-compressor/","local-image-compressor"],
+[3,"","PX-M887F スキャン to メール設定","https://chi-papa.github.io/px-m887f-mail-setup/","EPSON 設定マニュアル"],
+[3,"","Outlook 受信設定ガイド","https://chi-papa.github.io/outlook-shared-mail-guide/","クラシック版 確認・統一"]
+];
+
+var fav={}, g=1, s=1;
+try { fav = JSON.parse(localStorage.getItem("fav") || "{}") || {}; } catch(e) { fav = {}; }
+function save() { try { localStorage.setItem("fav", JSON.stringify(fav)); } catch(e) {} }
+function host(u) { return u.replace(/^https?:\/\/(www\.)?/, "").split(/[\/?#]/)[0]; }
+
+/* Theme Control (Default: Ivory) */
+var themeBtn = document.getElementById("themeBtn");
+function isDark() {
+  return document.documentElement.getAttribute("data-theme") === "dark";
+}
+function updateThemeIcon() {
+  themeBtn.innerHTML = isDark()
+    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>'
+    : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+}
+try {
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+} catch(e) {}
+updateThemeIcon();
+
+themeBtn.onclick = function() {
+  var next = isDark() ? "ivory" : "dark";
+  if (next === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("theme", next); } catch(e) {}
+  updateThemeIcon();
+};
+
+/* Render */
+function mkSub(box, label, sel, fn) {
+  var b = document.createElement("button");
+  b.type = "button";
+  b.textContent = label;
+  b.setAttribute("aria-selected", sel);
+  b.onclick = fn;
+  box.appendChild(b);
+}
+
+function draw() {
+  var top = document.getElementById("top");
+  top.textContent = "";
+  [1, 0, 2, 3].forEach(function(i) {
+    var k = D.filter(function(r) { return r[0] === i; }).length;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", i === g);
+    b.innerHTML = G[i] + '<span class="num">' + String(k).padStart(2, "0") + '</span>';
+    b.onclick = function() { g = i; s = 1; draw(); };
+    top.appendChild(b);
+  });
+
+  var sub = document.getElementById("sub");
+  sub.textContent = "";
+  sub.style.display = g === 0 ? "flex" : "none";
+  if (g === 0) {
+    SC.forEach(function(c, i) {
+      var label = i === 0
+        ? "★ " + D.filter(function(r) { return r[0] === 0 && fav[r[3]]; }).length
+        : c;
+      mkSub(sub, label, i === s, function() { s = i; draw(); });
+    });
+  }
+
+  var rows = D.filter(function(r) {
+    if (r[0] !== g) return false;
+    if (g !== 0) return true;
+    return s === 0 ? fav[r[3]] : r[1] === SC[s];
+  });
+
+  rows.sort(function(a, b) { return (fav[b[3]] ? 1 : 0) - (fav[a[3]] ? 1 : 0); });
+
+  var metaText = String(rows.length).padStart(2, "0") + " ITEMS";
+  if (g === 0) metaText += " — " + SC[s];
+  document.getElementById("cnt").textContent = metaText;
+
+  var m = document.getElementById("list");
+  m.textContent = "";
+  if (!rows.length) {
+    var e = document.createElement("div");
+    e.className = "e";
+    e.textContent = "★ をクリックすると、ここと各カテゴリの先頭に固定表示されます";
+    m.appendChild(e);
+    return;
+  }
+
+  rows.forEach(function(r, idx) {
+    var isFav = !!fav[r[3]];
+    var d = document.createElement("article");
+    d.className = "c" + (isFav ? " f" : "");
+
+    var a = document.createElement("a");
+    a.href = r[3];
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+
+    var head = document.createElement("div");
+    head.className = "c-head";
+    var num = document.createElement("span");
+    num.className = "c-idx";
+    num.textContent = String(idx + 1).padStart(2, "0");
+    head.appendChild(num);
+
+    var body = document.createElement("div");
+    body.className = "c-body";
+
+    var trow = document.createElement("div");
+    trow.className = "c-title-row";
+    var b = document.createElement("b");
+    b.textContent = r[2];
+    var arrow = document.createElement("span");
+    arrow.className = "c-arrow";
+    arrow.textContent = "↗";
+    trow.appendChild(b);
+    trow.appendChild(arrow);
+
+    var t = document.createElement("span");
+    t.className = "sub";
+    t.textContent = r[4] || host(r[3]);
+
+    body.appendChild(trow);
+    body.appendChild(t);
+    a.appendChild(head);
+    a.appendChild(body);
+
+    var f = document.createElement("button");
+    f.type = "button";
+    f.className = "fav-btn";
+    f.textContent = isFav ? "★" : "☆";
+    f.setAttribute("aria-label", r[2] + "をお気に入りに" + (isFav ? "から外す" : "追加"));
+    f.onclick = function() {
+      if (fav[r[3]]) delete fav[r[3]];
+      else fav[r[3]] = 1;
+      save();
+      draw();
+    };
+
+    d.appendChild(a);
+    d.appendChild(f);
+    m.appendChild(d);
+  });
+}
+
+draw();
+</script>
+</body>
+</html>
