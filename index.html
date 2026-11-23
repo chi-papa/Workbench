@@ -23,6 +23,8 @@
   --tag-ok-bg: rgba(61, 99, 71, 0.09);
   --tag-note: #7a6332;
   --tag-note-bg: rgba(122, 99, 50, 0.09);
+  --tag-own: #23211d;
+  --tag-own-bg: rgba(35, 33, 29, 0.08);
   --shadow-hover: 0 10px 24px -10px rgba(35, 33, 29, 0.12);
   --radius: 12px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -47,6 +49,8 @@
   --tag-ok-bg: rgba(132, 184, 146, 0.12);
   --tag-note: #d4b475;
   --tag-note-bg: rgba(212, 180, 117, 0.12);
+  --tag-own: #d8d4cb;
+  --tag-own-bg: rgba(235, 232, 225, 0.12);
   --shadow-hover: 0 16px 32px -12px rgba(0, 0, 0, 0.55);
   color-scheme: dark;
 }
@@ -319,6 +323,11 @@ main {
   background: var(--tag-note-bg);
 }
 
+.c-tag.own {
+  color: var(--tag-own);
+  background: var(--tag-own-bg);
+}
+
 .c-body {
   display: flex;
   flex-direction: column;
@@ -466,7 +475,7 @@ button:focus-visible, a:focus-visible {
 <script>
 var G=["素材サイト","自作ツール","ジェネレータ","マニュアル"];
 var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール","音"];
-/* [カテゴリ, サブカテゴリ, タイトル, URL, サブテキスト(任意), ライセンス目安(任意)] */
+/* [カテゴリ, サブカテゴリ, タイトル, URL, サブテキスト(任意), ラベル(任意)] */
 var D=[
 [0,"写真","Unsplash","https://unsplash.com/ja","","商用可"],
 [0,"写真","Pexels","https://www.pexels.com/ja-jp/","","商用可"],
@@ -534,9 +543,9 @@ var D=[
 [1,"","RMS用 記号コード変換","https://chi-papa.github.io/html-entity-symbol-converter/","記号 → 数値文字参照"],
 [1,"","路線便 最安シミュレーター","https://chi-papa.github.io/route-freight-simulator/","九州（福岡）発 運賃比較"],
 [1,"","価格シミュレーター","https://chi-papa.github.io/price-simulator/","price-simulator"],
-[2,"","テーブルレイアウト","https://chi-papa.github.io/table-layout-generator/","table-layout-generator"],
-[2,"","フレックスボックス","https://chi-papa.github.io/flexbox-generator/","flexbox-generator"],
-[2,"","画像圧縮","https://chi-papa.github.io/local-image-compressor/","local-image-compressor"],
+[2,"","テーブルレイアウト","https://chi-papa.github.io/table-layout-generator/","table-layout-generator","自作"],
+[2,"","フレックスボックス","https://chi-papa.github.io/flexbox-generator/","flexbox-generator","自作"],
+[2,"","画像圧縮","https://chi-papa.github.io/local-image-compressor/","local-image-compressor","自作"],
 [3,"","PX-M887F スキャン to メール設定","https://chi-papa.github.io/px-m887f-mail-setup/","EPSON 設定マニュアル"],
 [3,"","Outlook 受信設定ガイド","https://chi-papa.github.io/outlook-shared-mail-guide/","クラシック版 確認・統一"]
 ];
@@ -648,7 +657,8 @@ function draw() {
 
     if (r[5]) {
       var tag = document.createElement("span");
-      tag.className = "c-tag " + (r[5] === "商用可" ? "ok" : "note");
+      var cls = r[5] === "商用可" ? "ok" : (r[5] === "自作" ? "own" : "note");
+      tag.className = "c-tag " + cls;
       tag.textContent = r[5];
       head.appendChild(tag);
     }
