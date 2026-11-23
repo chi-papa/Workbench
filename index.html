@@ -6,20 +6,20 @@
 <title>Workbench</title>
 <style>
 :root {
-  --bg: #e9e5dc;
-  --surface: #f1eee7;
-  --surface-hover: #f5f2ec;
-  --ink: #25231f;
-  --ink-sub: #666157;
-  --ink-mute: #8f897d;
-  --border: rgba(37, 35, 31, 0.1);
-  --border-strong: rgba(37, 35, 31, 0.24);
-  --pill-active-bg: #25231f;
-  --pill-active-ink: #f1eee7;
-  --star: #a8711c;
-  --star-bg: rgba(168, 113, 28, 0.1);
-  --star-border: rgba(168, 113, 28, 0.38);
-  --shadow-hover: 0 10px 24px -10px rgba(37, 35, 31, 0.1);
+  --bg: #ded9ce;
+  --surface: #e7e3d9;
+  --surface-hover: #ece8df;
+  --ink: #23211d;
+  --ink-sub: #5f5a50;
+  --ink-mute: #857f73;
+  --border: rgba(35, 33, 29, 0.11);
+  --border-strong: rgba(35, 33, 29, 0.25);
+  --pill-active-bg: #23211d;
+  --pill-active-ink: #e7e3d9;
+  --star: #9e6816;
+  --star-bg: rgba(158, 104, 22, 0.12);
+  --star-border: rgba(158, 104, 22, 0.42);
+  --shadow-hover: 0 10px 24px -10px rgba(35, 33, 29, 0.12);
   --radius: 12px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: light;
@@ -510,7 +510,7 @@ try { fav = JSON.parse(localStorage.getItem("fav") || "{}") || {}; } catch(e) { 
 function save() { try { localStorage.setItem("fav", JSON.stringify(fav)); } catch(e) {} }
 function host(u) { return u.replace(/^https?:\/\/(www\.)?/, "").split(/[\/?#]/)[0]; }
 
-/* Theme Control (Default: Muted Ivory) */
+/* Theme Control (Default: Muted Stone Ivory) */
 var themeBtn = document.getElementById("themeBtn");
 function isDark() {
   return document.documentElement.getAttribute("data-theme") === "dark";
