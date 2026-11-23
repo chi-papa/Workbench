@@ -19,6 +19,10 @@
   --star: #9e6816;
   --star-bg: rgba(158, 104, 22, 0.12);
   --star-border: rgba(158, 104, 22, 0.42);
+  --tag-ok: #3d6347;
+  --tag-ok-bg: rgba(61, 99, 71, 0.09);
+  --tag-note: #7a6332;
+  --tag-note-bg: rgba(122, 99, 50, 0.09);
   --shadow-hover: 0 10px 24px -10px rgba(35, 33, 29, 0.12);
   --radius: 12px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -39,6 +43,10 @@
   --star: #e2b462;
   --star-bg: rgba(226, 180, 98, 0.12);
   --star-border: rgba(226, 180, 98, 0.35);
+  --tag-ok: #84b892;
+  --tag-ok-bg: rgba(132, 184, 146, 0.12);
+  --tag-note: #d4b475;
+  --tag-note-bg: rgba(212, 180, 117, 0.12);
   --shadow-hover: 0 16px 32px -12px rgba(0, 0, 0, 0.55);
   color-scheme: dark;
 }
@@ -280,7 +288,7 @@ main {
 .c-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding-right: 32px;
 }
 
@@ -290,6 +298,25 @@ main {
   color: var(--ink-mute);
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
+}
+
+.c-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+
+.c-tag.ok {
+  color: var(--tag-ok);
+  background: var(--tag-ok-bg);
+}
+
+.c-tag.note {
+  color: var(--tag-note);
+  background: var(--tag-note-bg);
 }
 
 .c-body {
@@ -390,6 +417,7 @@ footer {
   border-top: 1px solid var(--border);
   font-size: 11.5px;
   color: var(--ink-mute);
+  line-height: 1.7;
 }
 
 /* Focus */
@@ -429,35 +457,43 @@ button:focus-visible, a:focus-visible {
 
   <main id="list"></main>
 
-  <footer>外部リンク先のコンテンツおよび利用規約は、各サイトの運営元に帰属します。</footer>
+  <footer>
+    外部リンク先のコンテンツおよび権利は各サイトの運営元に帰属します。<br>
+    ※「商用可」「条件付」などの表記は目安です。実際の利用範囲（クレジット表記・点数制限・再配布等）は各サイトの最新規約をご確認ください。
+  </footer>
 </div>
 
 <script>
 var G=["素材サイト","自作ツール","ジェネレータ","マニュアル"];
 var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール","音"];
+/* [カテゴリ, サブカテゴリ, タイトル, URL, サブテキスト(任意), ライセンス目安(任意)] */
 var D=[
-[0,"写真","Unsplash","https://unsplash.com/ja"],
-[0,"写真","Pexels","https://www.pexels.com/ja-jp/"],
-[0,"写真","Pixabay","https://pixabay.com/ja/"],
-[0,"写真","ぱくたそ","https://www.pakutaso.com/"],
-[0,"写真","写真AC","https://www.photo-ac.com/"],
-[0,"写真","FOODIES FEED","https://www.foodiesfeed.com/"],
-[0,"写真","O-DAN","https://o-dan.net/ja/"],
-[0,"イラスト","いらすとや","https://www.irasutoya.com/"],
-[0,"イラスト","イラストAC","https://www.ac-illust.com/"],
-[0,"イラスト","Shigureni Free Illust","https://www.shigureni.com/"],
-[0,"イラスト","ちょうどいいイラスト","https://tyoudoii-illust.com/"],
-[0,"イラスト","unDraw","https://undraw.co/illustrations"],
-[0,"イラスト","Storyset","https://storyset.com/"],
-[0,"イラスト","PhotoshopVIP 素材一覧","https://photoshopvip.net/category/freebies"],
-[0,"イラスト","フリーイラスト124選","https://photoshopvip.net/115273"],
-[0,"アイコン・SVG","Heroicons","https://heroicons.com/"],
-[0,"アイコン・SVG","Phosphor Icons","https://phosphoricons.com/"],
-[0,"アイコン・SVG","Haikei","https://haikei.app/"],
-[0,"アイコン・SVG","Hero Patterns","https://heropatterns.com/"],
-[0,"アイコン・SVG","SVGurt","https://svgurt.com/#/"],
-[0,"アイコン・SVG","fffuel SVG spinner","https://www.fffuel.co/svg-spinner/"],
-[0,"アイコン・SVG","fffuel iiisometric","https://www.fffuel.co/iiisometric/"],
+[0,"写真","Unsplash","https://unsplash.com/ja","","商用可"],
+[0,"写真","Pexels","https://www.pexels.com/ja-jp/","","商用可"],
+[0,"写真","Pixabay","https://pixabay.com/ja/","","商用可"],
+[0,"写真","ぱくたそ","https://www.pakutaso.com/","","商用可"],
+[0,"写真","写真AC","https://www.photo-ac.com/","","商用可"],
+[0,"写真","FOODIES FEED","https://www.foodiesfeed.com/","","商用可"],
+[0,"写真","O-DAN","https://o-dan.net/ja/","横断検索（元サイト準拠）","条件付"],
+[0,"イラスト","いらすとや","https://www.irasutoya.com/","商用は点数制限あり","条件付"],
+[0,"イラスト","イラストAC","https://www.ac-illust.com/","","商用可"],
+[0,"イラスト","Shigureni Free Illust","https://www.shigureni.com/","","商用可"],
+[0,"イラスト","ちょうどいいイラスト","https://tyoudoii-illust.com/","","商用可"],
+[0,"イラスト","unDraw","https://undraw.co/illustrations","","商用可"],
+[0,"イラスト","Storyset","https://storyset.com/","無料利用は要クレジット","条件付"],
+[0,"イラスト","PhotoshopVIP 素材一覧","https://photoshopvip.net/category/freebies","","各配布元"],
+[0,"イラスト","フリーイラスト124選","https://photoshopvip.net/115273","","各配布元"],
+[0,"アイコン・SVG","Heroicons","https://heroicons.com/","","商用可"],
+[0,"アイコン・SVG","Phosphor Icons","https://phosphoricons.com/","太さ違いが揃うアイコン","商用可"],
+[0,"アイコン・SVG","Font Awesome Free","https://fontawesome.com/search?o=r&m=free","種類が多くEC定番が揃う","商用可"],
+[0,"アイコン・SVG","Material Symbols","https://fonts.google.com/icons","Google・線の太さ調整可","商用可"],
+[0,"アイコン・SVG","Bootstrap Icons","https://icons.getbootstrap.com/","シンプルで軽量なSVG","商用可"],
+[0,"アイコン・SVG","Tabler Icons","https://tabler.io/icons","統一感のある線画アイコン","商用可"],
+[0,"アイコン・SVG","Haikei","https://haikei.app/","","商用可"],
+[0,"アイコン・SVG","Hero Patterns","https://heropatterns.com/","","商用可"],
+[0,"アイコン・SVG","SVGurt","https://svgurt.com/#/","","商用可"],
+[0,"アイコン・SVG","fffuel SVG spinner","https://www.fffuel.co/svg-spinner/","","商用可"],
+[0,"アイコン・SVG","fffuel iiisometric","https://www.fffuel.co/iiisometric/","","商用可"],
 [0,"配色","Adobe Color","https://color.adobe.com/ja/"],
 [0,"配色","Coolors","https://coolors.co/"],
 [0,"配色","Colormind","http://colormind.io/"],
@@ -478,18 +514,18 @@ var D=[
 [0,"CSS・動き","Web Motion Catalog","https://web-motion-catalog.com/"],
 [0,"CSS・動き","Modulesss…","https://modulesss.com/"],
 [0,"CSS・動き","Spline","https://spline.design/"],
-[0,"Stella","Button Interaction","https://stella-create.co.jp/tools/css-button-interaction-studio/"],
-[0,"Stella","Scroll Scene","https://stella-create.co.jp/tools/css-scroll-scene-studio/?scene=runner&fog=0.6"],
-[0,"Stella","3D Gallery","https://stella-create.co.jp/tools/css-3d-gallery-studio/"],
-[0,"Stella","WebGL Image Transition","https://stella-create.co.jp/tools/webgl-image-transition-studio/"],
-[0,"Stella","Canvas Particle Image","https://stella-create.co.jp/tools/canvas-particle-image-studio/"],
-[0,"Stella","Christmas Decoration","https://stella-create.co.jp/tools/christmas-decoration-studio/"],
-[0,"UI・ツール","Google Fonts","https://fonts.google.com/"],
+[0,"Stella","Button Interaction","https://stella-create.co.jp/tools/css-button-interaction-studio/","","要確認"],
+[0,"Stella","Scroll Scene","https://stella-create.co.jp/tools/css-scroll-scene-studio/?scene=runner&fog=0.6","","要確認"],
+[0,"Stella","3D Gallery","https://stella-create.co.jp/tools/css-3d-gallery-studio/","","要確認"],
+[0,"Stella","WebGL Image Transition","https://stella-create.co.jp/tools/webgl-image-transition-studio/","","要確認"],
+[0,"Stella","Canvas Particle Image","https://stella-create.co.jp/tools/canvas-particle-image-studio/","","要確認"],
+[0,"Stella","Christmas Decoration","https://stella-create.co.jp/tools/christmas-decoration-studio/","","要確認"],
+[0,"UI・ツール","Google Fonts","https://fonts.google.com/","","商用可"],
 [0,"UI・ツール","UI Pocket","https://www.ui-pocket.com/mobile/apps"],
 [0,"UI・ツール","UIデザイン技37選","https://photoshopvip.net/160552"],
 [0,"UI・ツール","tableタグ生成","https://on-ze.com/tools/html-table/"],
-[0,"音","効果音ラボ","https://soundeffect-lab.info/"],
-[0,"音","DOVA-SYNDROME","https://dova-s.jp/"],
+[0,"音","効果音ラボ","https://soundeffect-lab.info/","","商用可"],
+[0,"音","DOVA-SYNDROME","https://dova-s.jp/","","商用可"],
 [1,"","見積書作成ツール","https://chi-papa.github.io/miitsumori/","miitsumori"],
 [1,"","取引先メーカーリンク集","https://chi-papa.github.io/agri-links/","agri-links"],
 [1,"","配送荷物追跡ツール","https://chi-papa.github.io/multi-carrier-tracking/","multi-carrier-tracking"],
@@ -609,6 +645,13 @@ function draw() {
     num.className = "c-idx";
     num.textContent = String(idx + 1).padStart(2, "0");
     head.appendChild(num);
+
+    if (r[5]) {
+      var tag = document.createElement("span");
+      tag.className = "c-tag " + (r[5] === "商用可" ? "ok" : "note");
+      tag.textContent = r[5];
+      head.appendChild(tag);
+    }
 
     var body = document.createElement("div");
     body.className = "c-body";
