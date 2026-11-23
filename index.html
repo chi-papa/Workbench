@@ -6,20 +6,20 @@
 <title>Workbench</title>
 <style>
 :root {
-  --bg: #f6f4ee;
-  --surface: #fbfaf6;
-  --surface-hover: #ffffff;
-  --ink: #1c1b18;
-  --ink-sub: #6d685d;
-  --ink-mute: #9c9689;
-  --border: rgba(28, 27, 24, 0.09);
-  --border-strong: rgba(28, 27, 24, 0.22);
-  --pill-active-bg: #1c1b18;
-  --pill-active-ink: #f6f4ee;
-  --star: #b87d24;
-  --star-bg: rgba(184, 125, 36, 0.1);
-  --star-border: rgba(184, 125, 36, 0.35);
-  --shadow-hover: 0 12px 28px -10px rgba(28, 27, 24, 0.08);
+  --bg: #e9e5dc;
+  --surface: #f1eee7;
+  --surface-hover: #f5f2ec;
+  --ink: #25231f;
+  --ink-sub: #666157;
+  --ink-mute: #8f897d;
+  --border: rgba(37, 35, 31, 0.1);
+  --border-strong: rgba(37, 35, 31, 0.24);
+  --pill-active-bg: #25231f;
+  --pill-active-ink: #f1eee7;
+  --star: #a8711c;
+  --star-bg: rgba(168, 113, 28, 0.1);
+  --star-border: rgba(168, 113, 28, 0.38);
+  --shadow-hover: 0 10px 24px -10px rgba(37, 35, 31, 0.1);
   --radius: 12px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: light;
@@ -29,12 +29,12 @@
   --bg: #111110;
   --surface: #181816;
   --surface-hover: #1e1e1b;
-  --ink: #f0eee8;
+  --ink: #ebe8e1;
   --ink-sub: #959086;
   --ink-mute: #5c5850;
-  --border: rgba(240, 238, 232, 0.08);
-  --border-strong: rgba(240, 238, 232, 0.2);
-  --pill-active-bg: #f0eee8;
+  --border: rgba(235, 232, 225, 0.08);
+  --border-strong: rgba(235, 232, 225, 0.2);
+  --pill-active-bg: #ebe8e1;
   --pill-active-ink: #111110;
   --star: #e2b462;
   --star-bg: rgba(226, 180, 98, 0.12);
@@ -63,7 +63,7 @@ body {
   padding:
     calc(clamp(32px, 5.5vw, 64px) + env(safe-area-inset-top, 0px))
     clamp(20px, 5.5vw, 60px)
-    calc(clamp(56px, 7.5vw, 96px) + env(safe-area-inset-bottom, 0px));
+    calc(clamp(48px, 6vw, 72px) + env(safe-area-inset-bottom, 0px));
   transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 
@@ -383,6 +383,15 @@ main {
   border-radius: var(--radius);
 }
 
+/* Footer */
+footer {
+  margin-top: clamp(48px, 6vw, 72px);
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+
 /* Focus */
 button:focus-visible, a:focus-visible {
   outline: 2px solid var(--ink);
@@ -419,6 +428,8 @@ button:focus-visible, a:focus-visible {
   </div>
 
   <main id="list"></main>
+
+  <footer>外部リンク先のコンテンツおよび利用規約は、各サイトの運営元に帰属します。</footer>
 </div>
 
 <script>
@@ -499,7 +510,7 @@ try { fav = JSON.parse(localStorage.getItem("fav") || "{}") || {}; } catch(e) { 
 function save() { try { localStorage.setItem("fav", JSON.stringify(fav)); } catch(e) {} }
 function host(u) { return u.replace(/^https?:\/\/(www\.)?/, "").split(/[\/?#]/)[0]; }
 
-/* Theme Control (Default: Ivory) */
+/* Theme Control (Default: Muted Ivory) */
 var themeBtn = document.getElementById("themeBtn");
 function isDark() {
   return document.documentElement.getAttribute("data-theme") === "dark";
