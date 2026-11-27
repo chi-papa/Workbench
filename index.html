@@ -7,7 +7,13 @@
 <link rel="icon" type="image/png" href="./apple-boy.png">
 <link rel="apple-touch-icon" href="./apple-boy.png">
 <link rel="preload" href="./SpaceGrotesk-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin>
-
+<script>
+try {
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+} catch(e) {}
+</script>
 <style>
 @font-face {
   font-family: "Space Grotesk";
@@ -190,7 +196,7 @@ header {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: 0;
   height: 1.5px;
   background: var(--ink);
 }
@@ -487,7 +493,7 @@ button:focus-visible, a:focus-visible {
 
 <script>
 var G=["素材サイト","自作ツール","ジェネレータ","マニュアル"];
-var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール","音"];
+var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール"];
 /* [カテゴリ, サブカテゴリ, タイトル, URL, サブテキスト(任意), ラベル(任意)] */
 var D=[
 [0,"写真","Unsplash","https://unsplash.com/ja","","商用可"],
@@ -502,7 +508,6 @@ var D=[
 [0,"イラスト","Shigureni Free Illust","https://www.shigureni.com/","","商用可"],
 [0,"イラスト","ちょうどいいイラスト","https://tyoudoii-illust.com/","","商用可"],
 [0,"イラスト","unDraw","https://undraw.co/illustrations","","商用可"],
-[0,"イラスト","Storyset","https://storyset.com/","無料利用は要クレジット","条件付"],
 [0,"イラスト","PhotoshopVIP 素材一覧","https://photoshopvip.net/category/freebies","","各配布元"],
 [0,"イラスト","フリーイラスト124選","https://photoshopvip.net/115273","","各配布元"],
 [0,"アイコン・SVG","Heroicons","https://heroicons.com/","","商用可"],
@@ -510,24 +515,16 @@ var D=[
 [0,"アイコン・SVG","Font Awesome Free","https://fontawesome.com/search?o=r&m=free","種類が多くEC定番が揃う","商用可"],
 [0,"アイコン・SVG","Material Symbols","https://fonts.google.com/icons","Google・線の太さ調整可","商用可"],
 [0,"アイコン・SVG","Bootstrap Icons","https://icons.getbootstrap.com/","シンプルで軽量なSVG","商用可"],
-[0,"アイコン・SVG","Tabler Icons","https://tabler.io/icons","統一感のある線画アイコン","商用可"],
 [0,"アイコン・SVG","Haikei","https://haikei.app/","","商用可"],
 [0,"アイコン・SVG","Hero Patterns","https://heropatterns.com/","","商用可"],
 [0,"アイコン・SVG","SVGurt","https://svgurt.com/#/","","商用可"],
-[0,"アイコン・SVG","fffuel SVG spinner","https://www.fffuel.co/svg-spinner/","","商用可"],
-[0,"アイコン・SVG","fffuel iiisometric","https://www.fffuel.co/iiisometric/","","商用可"],
 [0,"配色","Adobe Color","https://color.adobe.com/ja/"],
 [0,"配色","Coolors","https://coolors.co/"],
 [0,"配色","Colormind","http://colormind.io/"],
 [0,"配色","Khroma","https://www.khroma.co/"],
-[0,"配色","COLOURlovers","https://www.colourlovers.com/"],
 [0,"配色","Color Hunt","https://colorhunt.co/"],
 [0,"配色","ColorDrop","https://colordrop.io/"],
-[0,"配色","nipponcolors","https://nipponcolors.com/"],
-[0,"配色","配色アイデア手帳","https://www.color-sample.com/"],
 [0,"配色","Colorable","https://colorable.jxnblk.com/"],
-[0,"配色","WebAIM Contrast","https://webaim.org/resources/contrastchecker/"],
-[0,"配色","Realtime Colors","https://www.realtimecolors.com/"],
 [0,"CSS・動き","Animista","https://animista.net/play/basic/slide/slide-bl"],
 [0,"CSS・動き","Animista 背景","https://animista.net/play/background"],
 [0,"CSS・動き","Epic Spinners","https://epic-spinners.epicmax.co/"],
@@ -547,10 +544,6 @@ var D=[
 [0,"Stella","Image Focal Point Lab","https://stella-create.co.jp/tools/css-image-focal-point-lab/?x=65&y=56&fit=cover","","要確認"],
 [0,"UI・ツール","Google Fonts","https://fonts.google.com/","","商用可"],
 [0,"UI・ツール","UI Pocket","https://www.ui-pocket.com/mobile/apps"],
-[0,"UI・ツール","UIデザイン技37選","https://photoshopvip.net/160552"],
-[0,"UI・ツール","tableタグ生成","https://on-ze.com/tools/html-table/"],
-[0,"音","効果音ラボ","https://soundeffect-lab.info/","","商用可"],
-[0,"音","DOVA-SYNDROME","https://dova-s.jp/","","商用可"],
 [1,"","見積書作成ツール","https://chi-papa.github.io/miitsumori/","miitsumori"],
 [1,"","取引先メーカーリンク集","https://chi-papa.github.io/agri-links/","agri-links"],
 [1,"","配送荷物追跡ツール","https://chi-papa.github.io/multi-carrier-tracking/","multi-carrier-tracking"],
@@ -581,11 +574,6 @@ function updateThemeIcon() {
     ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>'
     : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 }
-try {
-  if (localStorage.getItem("theme") === "dark") {
-    document.documentElement.setAttribute("data-theme", "dark");
-  }
-} catch(e) {}
 updateThemeIcon();
 
 themeBtn.onclick = function() {
@@ -705,7 +693,7 @@ function draw() {
     f.type = "button";
     f.className = "fav-btn";
     f.textContent = isFav ? "★" : "☆";
-    f.setAttribute("aria-label", r[2] + "をお気に入りに" + (isFav ? "から外す" : "追加"));
+    f.setAttribute("aria-label", r[2] + (isFav ? "をお気に入りから外す" : "をお気に入りに追加"));
     f.onclick = function() {
       if (fav[r[3]]) delete fav[r[3]];
       else fav[r[3]] = 1;
