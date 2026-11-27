@@ -201,6 +201,11 @@ header {
   background: var(--ink);
 }
 
+#top button .star-mark {
+  color: var(--star);
+  font-size: 13px;
+}
+
 #top button .num {
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 11px;
@@ -313,6 +318,7 @@ main {
   align-items: center;
   gap: 8px;
   padding-right: 32px;
+  min-width: 0;
 }
 
 .c-idx {
@@ -321,9 +327,13 @@ main {
   color: var(--ink-mute);
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c-tag {
+  flex: none;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -493,7 +503,7 @@ button:focus-visible, a:focus-visible {
 
 <script>
 var G=["素材サイト","自作ツール","ジェネレータ","マニュアル"];
-var SC=["★","写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール"];
+var SC=["写真","イラスト","アイコン・SVG","配色","CSS・動き","Stella","UI・ツール"];
 /* [カテゴリ, サブカテゴリ, タイトル, URL, サブテキスト(任意), ラベル(任意)] */
 var D=[
 [0,"写真","Unsplash","https://unsplash.com/ja","","商用可"],
@@ -552,15 +562,21 @@ var D=[
 [1,"","RMS用 記号コード変換","https://chi-papa.github.io/html-entity-symbol-converter/","記号 → 数値文字参照"],
 [1,"","路線便 最安シミュレーター","https://chi-papa.github.io/route-freight-simulator/","九州（福岡）発 運賃比較"],
 [1,"","価格シミュレーター","https://chi-papa.github.io/price-simulator/","price-simulator"],
+[1,"","PIXELIA","https://chi-papa.github.io/PIXELIA/","画像・サムネイル制作エディタ"],
 [2,"","テーブルレイアウト","https://chi-papa.github.io/table-layout-generator/","table-layout-generator","自作"],
 [2,"","フレックスボックス","https://chi-papa.github.io/flexbox-generator/","flexbox-generator","自作"],
 [2,"","画像圧縮","https://chi-papa.github.io/local-image-compressor/","local-image-compressor","自作"],
+[2,"","JAN & QR ラベル作成ツール","https://chi-papa.github.io/jan-qr-label-maker/","バーコード・QR A4印刷","自作"],
 [3,"","PX-M887F スキャン to メール設定","https://chi-papa.github.io/px-m887f-mail-setup/","EPSON 設定マニュアル"],
 [3,"","Outlook 受信設定ガイド","https://chi-papa.github.io/outlook-shared-mail-guide/","クラシック版 確認・統一"]
 ];
 
-var fav={}, g=1, s=1;
+var fav={};
 try { fav = JSON.parse(localStorage.getItem("fav") || "{}") || {}; } catch(e) { fav = {}; }
+var initialFavCount = D.filter(function(r) { return !!fav[r[3]]; }).length;
+var g = initialFavCount > 0 ? -1 : 1;
+var s = 0;
+
 function save() { try { localStorage.setItem("fav", JSON.stringify(fav)); } catch(e) {} }
 function host(u) { return u.replace(/^https?:\/\/(www\.)?/, "").split(/[\/?#]/)[0]; }
 
@@ -597,14 +613,17 @@ function mkSub(box, label, sel, fn) {
 function draw() {
   var top = document.getElementById("top");
   top.textContent = "";
-  [1, 0, 2, 3].forEach(function(i) {
-    var k = D.filter(function(r) { return r[0] === i; }).length;
+  [-1, 1, 0, 2, 3].forEach(function(i) {
+    var k = i === -1
+      ? D.filter(function(r) { return !!fav[r[3]]; }).length
+      : D.filter(function(r) { return r[0] === i; }).length;
     var b = document.createElement("button");
     b.type = "button";
     b.setAttribute("role", "tab");
     b.setAttribute("aria-selected", i === g);
-    b.innerHTML = G[i] + '<span class="num">' + String(k).padStart(2, "0") + '</span>';
-    b.onclick = function() { g = i; s = 1; draw(); };
+    b.innerHTML = (i === -1 ? '<span class="star-mark">★</span>お気に入り' : G[i]) +
+      '<span class="num">' + String(k).padStart(2, "0") + '</span>';
+    b.onclick = function() { g = i; s = 0; draw(); };
     top.appendChild(b);
   });
 
@@ -613,23 +632,27 @@ function draw() {
   sub.style.display = g === 0 ? "flex" : "none";
   if (g === 0) {
     SC.forEach(function(c, i) {
-      var label = i === 0
-        ? "★ " + D.filter(function(r) { return r[0] === 0 && fav[r[3]]; }).length
-        : c;
-      mkSub(sub, label, i === s, function() { s = i; draw(); });
+      mkSub(sub, c, i === s, function() { s = i; draw(); });
     });
   }
 
   var rows = D.filter(function(r) {
+    if (g === -1) return !!fav[r[3]];
     if (r[0] !== g) return false;
     if (g !== 0) return true;
-    return s === 0 ? fav[r[3]] : r[1] === SC[s];
+    return r[1] === SC[s];
   });
 
-  rows.sort(function(a, b) { return (fav[b[3]] ? 1 : 0) - (fav[a[3]] ? 1 : 0); });
+  if (g === -1) {
+    var order = { 1: 0, 2: 1, 3: 2, 0: 3 };
+    rows.sort(function(a, b) { return order[a[0]] - order[b[0]]; });
+  } else {
+    rows.sort(function(a, b) { return (fav[b[3]] ? 1 : 0) - (fav[a[3]] ? 1 : 0); });
+  }
 
   var metaText = String(rows.length).padStart(2, "0") + " ITEMS";
   if (g === 0) metaText += " — " + SC[s];
+  else if (g === -1) metaText += " — FAVORITES";
   document.getElementById("cnt").textContent = metaText;
 
   var m = document.getElementById("list");
@@ -637,7 +660,7 @@ function draw() {
   if (!rows.length) {
     var e = document.createElement("div");
     e.className = "e";
-    e.textContent = "★ をクリックすると、ここと各カテゴリの先頭に固定表示されます";
+    e.textContent = "各カードの ☆ をクリックすると、ここに全カテゴリのお気に入りが集約されます";
     m.appendChild(e);
     return;
   }
@@ -656,7 +679,7 @@ function draw() {
     head.className = "c-head";
     var num = document.createElement("span");
     num.className = "c-idx";
-    num.textContent = String(idx + 1).padStart(2, "0");
+    num.textContent = String(idx + 1).padStart(2, "0") + (g === -1 ? " / " + (r[0] === 0 ? r[1] : G[r[0]]) : "");
     head.appendChild(num);
 
     if (r[5]) {
